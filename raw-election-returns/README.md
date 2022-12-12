@@ -1,0 +1,1 @@
+These files are the unaltered official election results [retrieved from the Wisconsin Election Commission](https://elections.wi.gov/election-result/2022-general-election-results). They were originally published on November 30, 2022.
