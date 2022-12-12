@@ -36,7 +36,7 @@ read_congress_sheet <- function(sheetnum){
     mutate(partycount = row_number()) %>%
     ungroup() %>%
     mutate(party = case_when(
-      str_detect(candidate, "Robbie Hoffman (write-in)") ~ paste0(party, "2"),
+      str_detect(candidate, "Robbie Hoffman") ~ paste0(party, "2"),
       str_detect(candidate, "Julie Hancock (write-in)") ~ paste0(party, "3"),
       partycount > 1 ~ paste0(party, partycount+1),
       TRUE ~ party
