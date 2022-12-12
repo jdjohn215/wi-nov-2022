@@ -44,7 +44,8 @@ d.all <- d.governor %>%
   inner_join(d.sos) %>%
   inner_join(d.senate) %>%
   left_join(d.statesenate) %>%
-  inner_join(d.treasurer)
+  inner_join(d.treasurer) %>%
+  select(county, rep_unit, contains("district"), everything())
 
 
 d.all %>%
