@@ -14,15 +14,14 @@ treasurer <- read_csv("clean-election-returns/Treasurer.csv")
 d.assembly <- assembly %>%
   select(-c(candidate)) %>%
   pivot_wider(names_from = party, values_from = votes, values_fill = 0) %>%
-  select(assembly_district = district, county, rep_unit, WSATOT22 = total,
+  select(county, rep_unit, WSATOT22 = total,
          WSADEM22 = DEM, WSAREP22 = REP)
 d.attorneygeneral <- attorneygeneral %>%
   select(county, rep_unit, WAGTOT22 = total, WAGDEM22 = kaul, WAGREP22 = toney)
 d.congress <- congress %>%
   select(-c(candidate)) %>%
   pivot_wider(names_from = party, values_from = votes, values_fill = 0) %>%
-  select(congress_district = district, county, rep_unit, 
-         USHTOT22 = total, USHDEM22 = DEM, USHREP22 = REP)
+  select(county, rep_unit, USHTOT22 = total, USHDEM22 = DEM, USHREP22 = REP)
 d.governor <- governor %>%
   select(county, rep_unit, GOVTOT22 = total, GOVDEM22 = evers, GOVREP22 = michels)
 d.sos <- sos %>%
@@ -32,10 +31,12 @@ d.senate <- senate %>%
 d.statesenate <- statesenate %>%
   select(-c(candidate)) %>%
   pivot_wider(names_from = party, values_from = votes, values_fill = 0) %>%
-  select(senate_district, county, rep_unit, 
+  select(county, rep_unit, 
          WSSTOT22 = total, WSSDEM22 = DEM, WSSREP22 = REP)
 d.treasurer <- treasurer %>%
   select(county, rep_unit, WSTTOT22 = total, WSTDEM22 = richardson, WSTREP22 = leiber)
+
+rep.unit.districts <- read_csv("clean-election-returns/ReportingUnitsWithDistricts.csv")
 
 d.all <- d.governor %>%
   inner_join(d.assembly) %>%
@@ -45,6 +46,7 @@ d.all <- d.governor %>%
   inner_join(d.senate) %>%
   left_join(d.statesenate) %>%
   inner_join(d.treasurer) %>%
+  inner_join(rep.unit.districts) %>%
   select(county, rep_unit, contains("district"), everything())
 
 
