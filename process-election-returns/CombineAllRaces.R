@@ -83,12 +83,3 @@ all.by.congress <- d.all %>%
   summarise(across(where(is.numeric), sum))
 write_csv(all.by.congress, "clean-election-returns/AllRacesByCongressionalDistrict.csv")
 
-# all results by mcd
-all.by.mcd <- d.all %>%
-  separate(rep_unit, into = c("municipality", "wards"), sep = "\\bWard\\b|\\bWards\\b") %>%
-  select(-contains("district")) %>%
-  group_by(county, municipality) %>%
-  summarise(across(where(is.numeric), sum)) %>%
-  mutate(across(where(is.character), str_squish)) %>%
-  ungroup()
-write_csv(all.by.mcd, "clean-election-returns/AllRacesByMCD.csv")
