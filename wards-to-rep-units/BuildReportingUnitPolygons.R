@@ -22,5 +22,26 @@ rep.unit.polygons <- rep.units.to.wards %>%
   summarise() %>%
   ungroup()
 
+# add vote totals
+all.votes <- read_csv("clean-election-returns/AllRaces.csv") %>%
+  mutate(rep_unit = str_to_upper(rep_unit)) %>%
+  rename(CNTY_NAME = county)
 
-st_write(rep.unit.polygons, "wards-to-rep-units/ReportingUnitPolygons.geojson")
+all.votes.sf <- rep.unit.polygons %>%
+  inner_join(all.votes)
+
+# test that all votes are accounted for after spatial join
+inner_join(
+  all.votes.sf %>%
+    st_set_geometry(NULL) %>%
+    select(contains("TOT")) %>%
+    summarise(across(where(is.numeric), sum, na.rm = T)) %>%
+    pivot_longer(cols = everything(), names_to = "race", values_to = "after_spatial_join"),
+  all.votes %>%
+    select(contains("TOT")) %>%
+    summarise(across(where(is.numeric), sum, na.rm = T)) %>%
+    pivot_longer(cols = everything(), names_to = "race", values_to = "before_spatial_join")
+) %>%
+  mutate(match = after_spatial_join == before_spatial_join)
+
+st_write(all.votes.sf, "wards-to-rep-units/ReportingUnitPolygons.geojson", delete_dsn = T)
