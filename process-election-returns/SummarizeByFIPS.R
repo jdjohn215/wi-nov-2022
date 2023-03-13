@@ -20,7 +20,7 @@ by.municipality <- rep.units.polygons %>%
   ungroup()
 
 by.mcd <- rep.units.polygons %>%
-  group_by(MCD_NAME, CTV, MCD_FIPS) %>%
+  group_by(CNTY_NAME, MCD_NAME, CTV, MCD_FIPS) %>%
   summarise(across(contains("22"), sum, na.rm = T)) %>%
   ungroup()
 
