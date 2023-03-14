@@ -8,7 +8,7 @@ all.races.orig <- read_csv("clean-election-returns/AllRaces.csv")
 rep.units.to.wards <- read_csv("wards-to-rep-units/WardsInRepUnits.csv")
 
 # ward polygons
-wards.orig <- st_read("wards-to-rep-units/WI_Municipal_Wards_November_2022.geojson") %>%
+wards.orig <- st_read("~/dropbox/projects/2022/november/electionresults/wards/WI_Municipal_Wards_November_2022.geojson") %>%
   st_set_geometry(NULL) %>%
   tibble()
 
@@ -49,7 +49,7 @@ unjoined.wards <- wards.orig %>%
 # all joined reporting units
 joined.rep.units <- join1 %>%
   group_by(CNTY_NAME, rep_unit) %>%
-  summarise(ward_list = paste(WARD_FIPS, collapse = ", ")) %>%
+  summarise(ward_list = paste(unique(WARD_FIPS), collapse = ", ")) %>%
   ungroup()
 
 # reporting units with no ward matches
@@ -60,3 +60,13 @@ all.races.orig %>%
   anti_join(joined.rep.units)
 
 write_csv(joined.rep.units, "wards-to-rep-units/ReportingUnitsWithWardIDs.csv")
+
+
+orig.wards.with.reporting.unit <- st_read("~/dropbox/projects/2022/november/electionresults/wards/WI_Municipal_Wards_November_2022.geojson") %>%
+  left_join(
+    joined.rep.units %>%
+      separate_rows(ward_list) %>%
+      select(rep_unit, WARD_FIPS = ward_list)
+  )
+st_write(orig.wards.with.reporting.unit, "wards-to-rep-units/WI_Municipal_Wards_November_2022.geojson",
+         delete_dsn = T)
